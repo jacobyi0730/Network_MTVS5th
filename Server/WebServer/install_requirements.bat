@@ -2,6 +2,7 @@
 setlocal
 
 cd /d "%~dp0"
+set "UV_CACHE_DIR=%~dp0.uv-cache"
 
 where uv >nul 2>nul
 if errorlevel 1 (

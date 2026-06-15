@@ -37,4 +37,8 @@ public:
 	void OnReqGetComplete(TSharedPtr<IHttpRequest> HttpRequest, TSharedPtr<IHttpResponse> HttpResponse, bool bProcessedSuccessfully);
 	
 	void ParseLibraryJson_Get(const FString& JsonString);
+
+	void ReqPost(const FString& url, const FString& content);
+	void OnReqPostComplete(TSharedPtr<IHttpRequest> HttpRequest, TSharedPtr<IHttpResponse> HttpResponse, bool bProcessedSuccessfully);
+	
 };

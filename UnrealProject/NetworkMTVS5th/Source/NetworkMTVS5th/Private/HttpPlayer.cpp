@@ -120,3 +120,28 @@ void AHttpPlayer::ParseLibraryJson_Get(const FString& JsonString)
         UE_LOG(LogTemp, Error, TEXT("JSON 파싱에 실패했습니다."));
     }
 }
+
+void AHttpPlayer::ReqPost(const FString& url, const FString& content)
+{
+	FHttpModule& httpModule = FHttpModule::Get();
+	TSharedPtr<IHttpRequest> req = httpModule.CreateRequest();
+	
+	req->SetURL(url);
+	req->SetVerb(TEXT("POST"));
+	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	req->SetContentAsString(content);
+	
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpPlayer::OnReqPostComplete);
+	
+	req->ProcessRequest();
+}
+
+void AHttpPlayer::OnReqPostComplete(TSharedPtr<IHttpRequest> HttpRequest, TSharedPtr<IHttpResponse> HttpResponse,
+	bool bProcessedSuccessfully)
+{
+	if (HttpUI)
+	{
+		FString content = HttpResponse->GetContentAsString();
+		HttpUI->UpdateLog(content);
+	}
+}

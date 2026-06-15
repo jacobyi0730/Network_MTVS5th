@@ -15,6 +15,8 @@ void UHttpUI::NativeConstruct()
 	HttpPlayer = Cast<AHttpPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
 	ButtonSend_Get->OnClicked.AddDynamic(this, &UHttpUI::OnButtonSend_Get);
+	ButtonSend_Post->OnClicked.AddDynamic(this, &UHttpUI::OnButtonSend_Post);
+	ButtonWebImage->OnClicked.AddDynamic(this, &UHttpUI::OnButtonWebImage);
 }
 
 void UHttpUI::OnButtonSend_Get()
@@ -30,6 +32,19 @@ void UHttpUI::OnButtonSend_Get()
 	);
 
 	HttpPlayer->ReqGet(fullUrl);
+}
+
+void UHttpUI::OnButtonSend_Post()
+{
+	FString url = TEXT("http://127.0.0.1:8000/echo");
+	
+	FString content = TEXT("안녕하세요?");
+	
+	HttpPlayer->ReqPost(url, content);
+}
+
+void UHttpUI::OnButtonWebImage()
+{
 }
 
 void UHttpUI::UpdateLog(const FString& LogText)
