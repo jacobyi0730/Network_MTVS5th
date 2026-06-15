@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echo Test</title>
+  <style>
+    :root {
+      --bg: #f3efe7;
+      --panel: #fffdf8;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #c2410c;
+      --accent-dark: #9a3412;
+      --border: #e7dccb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, #facc15 0, transparent 28%),
+        linear-gradient(135deg, #f8f1e5, #efe6d7 55%, #e9dcc9);
+      color: var(--text);
+      font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+    }
+
+    .card {
+      width: min(100%, 720px);
+      background: rgba(255, 253, 248, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 24px 70px rgba(80, 55, 20, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 5vw, 42px);
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      font: inherit;
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    button[type="submit"] {
+      background: var(--accent);
+      color: white;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    button[type="button"] {
+      background: #efe7da;
+      color: var(--text);
+    }
+
+    .panel {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 16px;
+      background: #fffaf1;
+      border: 1px solid var(--border);
+    }
+
+    .panel-title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: Consolas, "Courier New", monospace;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>POST Echo Test</h1>
+    <p>메시지를 입력하면 <code>/echo</code>로 POST 요청을 보내고 응답 JSON을 그대로 보여줍니다.</p>
+
+    <form id="echo-form">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="여기에 테스트할 내용을 입력하세요.">hello fastapi</textarea>
+      <div class="actions">
+        <button type="submit">Send</button>
+        <button type="button" id="clear-btn">Clear</button>
+      </div>
+    </form>
+
+    <section class="panel">
+      <h2 class="panel-title">Response</h2>
+      <pre id="result">아직 요청을 보내지 않았습니다.</pre>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("echo-form");
+    const message = document.getElementById("message");
+    const result = document.getElementById("result");
+    const clearBtn = document.getElementById("clear-btn");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      result.textContent = "요청 중...";
+
+      try {
+        const response = await fetch("/echo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: message.value })
+        });
+
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = `요청 실패: ${error}`;
+      }
+    });
+
+    clearBtn.addEventListener("click", () => {
+      message.value = "";
+      result.textContent = "아직 요청을 보내지 않았습니다.";
+      message.focus();
+    });
+  </script>
+</body>
+</html>

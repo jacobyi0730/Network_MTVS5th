@@ -1,0 +1,33 @@
+# Unreal build outputs
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Generated IDE / project files
+.vs/
+.idea/
+.vscode/
+*.VC.db
+*.VC.opendb
+*.sln
+*.suo
+*.user
+*.userprefs
+*.opensdf
+*.sdf
+
+# Live coding / debug artifacts
+*.pdb
+*.exp
+*.lib
+*.obj
+*.ipch
+
+# Keep source assets and config tracked
+!Source/
+!Config/
+!Content/
+!Plugins/
+!*.uproject
