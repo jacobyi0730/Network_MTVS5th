@@ -7,6 +7,7 @@
 #include "HttpUI.h"
 #include "Blueprint/UserWidget.h"
 #include "Interfaces/IHttpResponse.h"
+#include "ImageUtils.h"
 
 
 // Sets default values
@@ -143,5 +144,39 @@ void AHttpPlayer::OnReqPostComplete(TSharedPtr<IHttpRequest> HttpRequest, TShare
 	{
 		FString content = HttpResponse->GetContentAsString();
 		HttpUI->UpdateLog(content);
+	}
+}
+
+void AHttpPlayer::ReqWebImage(const FString& url)
+{
+	FHttpModule& httpModule = FHttpModule::Get();
+	TSharedPtr<IHttpRequest> req = httpModule.CreateRequest();
+	
+	req->SetURL(url);
+	req->SetVerb(TEXT("Get"));
+	req->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
+	
+	req->OnProcessRequestComplete().BindUObject(this, &AHttpPlayer::OnReqWebImageComplete);
+	
+	req->ProcessRequest();
+}
+
+void AHttpPlayer::OnReqWebImageComplete(TSharedPtr<IHttpRequest> HttpRequest, TSharedPtr<IHttpResponse> HttpResponse,
+	bool bProcessedSuccessfully)
+{
+	if (bProcessedSuccessfully)
+	{
+		TArray<uint8> data = HttpResponse->GetContent();
+		
+		FString imgPath = FPaths::ProjectPersistentDownloadDir() + "/Cat.jpeg";
+		FFileHelper::SaveArrayToFile(data, *imgPath);
+		
+		
+		UTexture2D* tex = FImageUtils::ImportBufferAsTexture2D(data); 
+		
+		if (HttpUI)
+		{
+			HttpUI->UpdateWebImage(tex);
+		}
 	}
 }

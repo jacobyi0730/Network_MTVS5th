@@ -26,7 +26,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UHttpUI> HttpUIFactory;
 	
@@ -40,5 +40,9 @@ public:
 
 	void ReqPost(const FString& url, const FString& content);
 	void OnReqPostComplete(TSharedPtr<IHttpRequest> HttpRequest, TSharedPtr<IHttpResponse> HttpResponse, bool bProcessedSuccessfully);
+
+	void ReqWebImage(const FString& url);
+	void OnReqWebImageComplete(TSharedPtr<IHttpRequest> HttpRequest, TSharedPtr<IHttpResponse> HttpResponse, bool bProcessedSuccessfully);
+
 	
 };

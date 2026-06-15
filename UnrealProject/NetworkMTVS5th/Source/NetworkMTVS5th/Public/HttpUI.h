@@ -54,6 +54,10 @@ public:
 	UFUNCTION()
 	void OnButtonWebImage();
 	
+	void UpdateWebImage(class UTexture2D* txt);
+	
 	void UpdateLog(const FString& LogText);
+	
+	FString MapToJson(const TMap<FString, FString>& map);
 	
 };

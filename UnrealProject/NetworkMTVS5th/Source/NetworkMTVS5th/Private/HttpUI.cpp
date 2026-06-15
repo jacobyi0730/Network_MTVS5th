@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 void UHttpUI::NativeConstruct()
 {
@@ -38,18 +39,45 @@ void UHttpUI::OnButtonSend_Post()
 {
 	FString url = TEXT("http://127.0.0.1:8000/echo");
 	
-	FString content = TEXT("안녕하세요?");
+	TMap<FString, FString> map;
+	map.Add(TEXT("key"), TEXT("value"));
+	FString content = MapToJson(map);
 	
 	HttpPlayer->ReqPost(url, content);
 }
 
 void UHttpUI::OnButtonWebImage()
 {
+	// 웹에서 이미지를 다운로드 받고  그 결과를 ImageWeb에 표현하고싶다.
+	FString url = TEXT("https://cdn.imweb.me/upload/S20220518fbea59f8e9828/77d99edcb5dbf.jpg");
+	HttpPlayer->ReqWebImage(url);
+}
+
+void UHttpUI::UpdateWebImage(UTexture2D* txt)
+{
+	ImageWeb->SetBrushFromTexture(txt, false);
 }
 
 void UHttpUI::UpdateLog(const FString& LogText)
 {
 	TextLog->SetText(FText::FromString(LogText));
+}
+
+FString UHttpUI::MapToJson(const TMap<FString, FString>& map)
+{
+	TSharedPtr<FJsonObject> json = MakeShared<FJsonObject>();
+	
+	for (auto& pair : map)
+	{
+		json->SetStringField(pair.Key, pair.Value);
+	}
+	
+	FString jsonData;
+	
+	auto writer = TJsonWriterFactory<TCHAR>::Create(&jsonData);
+	FJsonSerializer::Serialize(json.ToSharedRef(), writer);
+	
+	return jsonData;
 }
 
 
